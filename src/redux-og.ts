@@ -1,5 +1,7 @@
-import uuid from "uuid"
-import {combineReducers, createStore} from "redux";
+import {v1 as uuid} from "uuid"
+import {combineReducers, createStore, applyMiddleware } from "redux";
+import {composeWithDevTools} from "redux-devtools-extension";
+import logger from "redux-logger";
 import { Todo } from "./type"
 
 // constants 
@@ -169,4 +171,8 @@ const reducers = combineReducers({
 	counter: counterReducer,
 })
 
-export default createStore(reducers);
+// Store
+export default createStore(
+	reducers,
+	composeWithDevTools(applyMiddleware(logger))
+);
