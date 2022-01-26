@@ -1,3 +1,5 @@
+Note: Maybe you can upgrade your typescript version to "^4.1.2"
+
 This is the starting place in conjunction with my **Redux Toolkit** comparison video. Please start here. NOTE: no dependencies related to Redux are installed here! Please follow along in the video and add them with me!
 
 <img src="image.png" alt="app" style="margin-left: 15px;" />
