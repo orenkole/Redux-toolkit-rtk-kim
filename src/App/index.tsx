@@ -5,32 +5,16 @@ import React, {
   useRef,
   useState
 } from "react";
-import { v1 as uuid } from "uuid";
-import { Todo } from "../type";
+import { useDispatch, useSelector } from "react-redux";
+import { createTodoActionCreator, deleteTodoAcitonCreator, editTodoActionCreator, selecTodoActionCreator, toggeTodoActionCreator } from "../redux-og";
+import { State } from "../type";
 import "./App.css";
 
-const todos: Todo[] = [
-  {
-    id: uuid(),
-    desc: "Learn React",
-    isComplete: true
-  },
-  {
-    id: uuid(),
-    desc: "Learn Redux",
-    isComplete: true
-  },
-  {
-    id: uuid(),
-    desc: "Learn Redux-ToolKit",
-    isComplete: false
-  }
-];
-
-const selectedTodoId = todos[1].id;
-const editedCount = 0;
-
 const App = function() {
+  const dispatch = useDispatch();
+  const todos = useSelector((s: State) => s.todos)
+  const selectedTodoId = useSelector((s: State) => s.selectedTodo);
+  const editedCount = useSelector((s: State) => s.counter);
   const [newTodoInput, setNewTodoInput] = useState<string>("");
   const [editTodoInput, setEditTodoInput] = useState<string>("");
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
@@ -49,9 +33,14 @@ const App = function() {
 
   const handleCreateNewTodo = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
+    if (!newTodoInput.length) return;
+    dispatch(createTodoActionCreator({desc: newTodoInput}))
+    setNewTodoInput('')
   };
 
-  const handleSelectTodo = (todoId: string) => (): void => {};
+  const handleSelectTodo = (todoId: string) => (): void => {
+    dispatch(selecTodoActionCreator({id: todoId}))
+  };
 
   const handleEdit = (): void => {
     if (!selectedTodo) return;
@@ -68,22 +57,31 @@ const App = function() {
 
   const handleUpdate = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
+    if(editTodoInput.length || !selectedTodoId) {
+      handleCancelUpdate();
+      return;
+    };
+    dispatch(editTodoActionCreator({id: selectedTodoId, desc: editTodoInput}))
+    setIsEditMode(false);
+    setEditTodoInput('')
   };
 
   const handleCancelUpdate = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    e?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): void => {
-    e.preventDefault();
+    e?.preventDefault();
     setIsEditMode(false);
     setEditTodoInput("");
   };
 
   const handleToggle = (): void => {
     if (!selectedTodoId || !selectedTodo) return;
+    dispatch(toggeTodoActionCreator({id: selectedTodoId, isComplete: !selectedTodo.isComplete}))
   };
 
   const handleDelete = (): void => {
     if (!selectedTodoId) return;
+    dispatch(deleteTodoAcitonCreator({id: selectedTodoId}))
   };
 
   return (
